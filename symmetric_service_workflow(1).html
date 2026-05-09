@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Call Workflow — Symmetric IT Services</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:        #0d2540;
+    --navy-mid:    #1a3a5c;
+    --navy-light:  #2a5a8c;
+    --accent:      #e8f2ff;
+    --accent2:     #d0e5ff;
+    --gold:        #f0a500;
+    --text-dark:   #0d1f33;
+    --text-mid:    #3d5166;
+    --text-light:  #6b829a;
+    --border:      #d6e4f0;
+    --bg:          #f4f8fc;
+    --white:       #ffffff;
+    --green:       #1d6b3e;
+    --green-bg:    #e6f5ed;
+    --amber:       #8a5200;
+    --amber-bg:    #fff4e0;
+    --purple:      #4a1c8c;
+    --purple-bg:   #f2ecff;
+    --teal:        #0d5c6e;
+    --teal-bg:     #e4f5f8;
+    --shadow-sm:   0 1px 4px rgba(13,37,64,.07);
+    --shadow-md:   0 4px 20px rgba(13,37,64,.10);
+    --shadow-lg:   0 12px 40px rgba(13,37,64,.14);
+    --radius:      14px;
+    --radius-sm:   8px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(13,37,64,.25);
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: auto;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo-block { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, #2a7ad5 0%, #1a4e9e 100%);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .logo-text { line-height: 1.2; }
+  .logo-name { font-size: 15px; font-weight: 600; color: #fff; }
+  .logo-tagline { font-size: 11px; color: #8aadcc; letter-spacing: .03em; }
+  .header-badge {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: #aacbea;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .header-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: #4cd964;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── HERO STRIP ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 55%, #1d4f8a 100%);
+    padding: 56px 32px 52px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero-label {
+    display: inline-block;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 12px;
+    color: #aacbea;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-size: clamp(26px, 4vw, 40px);
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 14px;
+    letter-spacing: -.02em;
+  }
+  .hero h1 span { color: #62aeff; }
+  .hero p {
+    font-size: 16px;
+    color: #8aadcc;
+    max-width: 560px;
+    margin: 0 auto 28px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .num { font-size: 22px; font-weight: 600; color: #fff; }
+  .hero-stat .lbl { font-size: 12px; color: #6a9abe; margin-top: 2px; }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--navy-light);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 24px;
+    letter-spacing: -.02em;
+  }
+
+  /* ── TIMELINE STEPS ── */
+  .timeline { position: relative; display: flex; flex-direction: column; gap: 0; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 31px;
+    top: 48px;
+    bottom: 48px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--navy-mid), var(--purple));
+    z-index: 0;
+  }
+
+  .step { display: flex; gap: 24px; position: relative; padding-bottom: 8px; }
+  .step:last-child { padding-bottom: 0; }
+
+  .step-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+  .step-num {
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    border: 3px solid var(--white);
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+  .step-connector {
+    width: 2px;
+    flex: 1;
+    min-height: 20px;
+    margin: 4px 0;
+  }
+
+  .step-card {
+    flex: 1;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .step-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    padding: 18px 22px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .card-header-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .card-header-text {}
+  .card-role {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .card-title { font-size: 17px; font-weight: 600; color: var(--text-dark); }
+  .card-desc {
+    padding: 14px 22px 0;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.65;
+  }
+
+  .card-grid {
+    padding: 16px 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 620px) { .card-grid { grid-template-columns: 1fr; } }
+
+  .info-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+  }
+  .info-box-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 10px;
+  }
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.45;
+  }
+  .info-row:last-child { margin-bottom: 0; }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .card-action {
+    margin: 0 22px 18px;
+    border-radius: var(--radius-sm);
+    padding: 11px 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .card-action-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── URGENCY TABLE ── */
+  .urgency-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 700px) { .urgency-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 440px) { .urgency-grid { grid-template-columns: 1fr; } }
+
+  .urgency-card {
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    border: 1px solid;
+  }
+  .urgency-card .u-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .urgency-card .u-desc { font-size: 12px; line-height: 1.4; }
+  .urgency-card .u-sla { font-size: 12px; font-weight: 600; margin-top: 8px; }
+
+  /* ── PROCESS OVERVIEW FLOW ── */
+  .flow-strip {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 36px;
+    overflow-x: auto;
+    box-shadow: var(--shadow-sm);
+  }
+  .flow-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    min-width: 90px;
+    cursor: default;
+  }
+  .flow-node-circle {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    border: 2px solid;
+  }
+  .flow-node-label { font-size: 11px; font-weight: 500; color: var(--text-mid); text-align: center; line-height: 1.3; }
+  .flow-arrow { color: var(--border); font-size: 20px; margin: 0 4px; flex-shrink: 0; padding-bottom: 18px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy);
+    color: #7a9ab5;
+    text-align: center;
+    padding: 28px 24px;
+    font-size: 13px;
+  }
+  footer strong { color: #a0bdd4; }
+
+  /* ── PRINT ── */
+  @media print {
+    header { position: static; }
+    .step-card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+    .hero { padding: 30px; }
+    .timeline::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-block">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">
+        <div class="logo-name">Symmetric IT Services</div>
+        <div class="logo-tagline">Empowering Businesses with Seamless Technology</div>
+      </div>
+    </div>
+    <div class="header-badge">Field Operations SOP</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">Standard Operating Procedure</div>
+  <h1>Service Call <span>Workflow</span></h1>
+  <p>End-to-end process for fast, efficient, and trackable field service operations — from ticket creation to final payment closure.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">5</div><div class="lbl">Workflow Stages</div></div>
+    <div class="hero-stat"><div class="num">24×7</div><div class="lbl">Service Coverage</div></div>
+    <div class="hero-stat"><div class="num">4hr</div><div class="lbl">Critical Response</div></div>
+  </div>
+</div>
+
+<main>
+
+  <!-- PROCESS FLOW STRIP -->
+  <p class="section-label">At a glance</p>
+  <p class="section-title">End-to-end service journey</p>
+
+  <div class="flow-strip" role="list" aria-label="Service workflow overview">
+    <div class="flow-node" role="listitem">
+      <div class="flow-node-circle" style="background:#e8f2ff;border-color:#2a5a8c;color:#1a3a5c;">📋</div>
+      <div class="flow-node-label">New<br>Ticket</div>
+    </div>
+    <div class="flow-arrow" aria-hidden="true">›</div>
+    <div class="flow-node" role="listitem">
+      <div class="flow-node-circle" style="background:#e6f4ed;border-color:#2d6a4f;color:#2d6a4f;">👤</div>
+      <div class="flow-node-label">Assign<br>Engineer</div>
+    </div>
+    <div class="flow-arrow" aria-hidden="true">›</div>
+    <div class="flow-node" role="listitem">
+      <div class="flow-node-circle" style="background:#fff4e0;border-color:#8a5200;color:#8a5200;">📍</div>
+      <div class="flow-node-label">Site<br>Visit</div>
+    </div>
+    <div class="flow-arrow" aria-hidden="true">›</div>
+    <div class="flow-node" role="listitem">
+      <div class="flow-node-circle" style="background:#e6f7ee;border-color:#1a5c36;color:#1a5c36;">✅</div>
+      <div class="flow-node-label">Resolve<br>& Close</div>
+    </div>
+    <div class="flow-arrow" aria-hidden="true">›</div>
+    <div class="flow-node" role="listitem">
+      <div class="flow-node-circle" style="background:#f2ecff;border-color:#4a1c8c;color:#4a1c8c;">🧾</div>
+      <div class="flow-node-label">Invoice<br>& Pay</div>
+    </div>
+  </div>
+
+  <!-- URGENCY LEVELS -->
+  <p class="section-label" style="margin-top:8px">Response SLAs</p>
+  <p class="section-title">Urgency classification</p>
+
+  <div class="urgency-grid">
+    <div class="urgency-card" style="background:#fff1f0;border-color:#ffb3b0;">
+      <div class="u-label" style="color:#c0392b;">🔴 Critical</div>
+      <div class="u-desc" style="color:#7a2828;">Site-down, security breach, fire system failure</div>
+      <div class="u-sla" style="color:#c0392b;">Response: ≤ 4 hours</div>
+    </div>
+    <div class="urgency-card" style="background:#fff8e6;border-color:#ffd080;">
+      <div class="u-label" style="color:#9a6200;">🟠 High</div>
+      <div class="u-desc" style="color:#6b4400;">Partial failure, degraded operations</div>
+      <div class="u-sla" style="color:#9a6200;">Response: Same day</div>
+    </div>
+    <div class="urgency-card" style="background:#eaf5ff;border-color:#90caf9;">
+      <div class="u-label" style="color:#1565c0;">🔵 Medium</div>
+      <div class="u-desc" style="color:#1a3a5c;">Non-critical equipment fault, partial issue</div>
+      <div class="u-sla" style="color:#1565c0;">Response: ≤ 48 hours</div>
+    </div>
+    <div class="urgency-card" style="background:#f0fff4;border-color:#a5d6a7;">
+      <div class="u-label" style="color:#2e7d32;">🟢 Low</div>
+      <div class="u-desc" style="color:#2e6040;">Routine check, inspection, minor tweak</div>
+      <div class="u-sla" style="color:#2e7d32;">Response: ≤ 5 days</div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <p class="section-label" style="margin-top:16px">Detailed steps</p>
+  <p class="section-title">Step-by-step workflow</p>
+
+  <div class="timeline">
+
+    <!-- STEP 1 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num" style="background:#1a3a5c;color:#fff;box-shadow:0 0 0 4px #d0e5ff;">1</div>
+        <div class="step-connector" style="background:linear-gradient(to bottom,#1a3a5c,#2d6a4f);"></div>
+      </div>
+      <div class="step-card">
+        <div class="card-header" style="background:linear-gradient(135deg,#eaf2ff,#f6faff);">
+          <div class="card-header-icon" style="background:#d0e5ff;">📋</div>
+          <div class="card-header-text">
+            <div class="card-role" style="color:#1a3a5c;">Manager</div>
+            <div class="card-title">Create Service Ticket</div>
+          </div>
+        </div>
+        <div class="card-desc">
+          Client reports an issue — CCTV offline, network fault, access control failure, fire alarm alert, or any site concern. Manager logs a structured ticket with all required details to ensure no information is missed before dispatch.
+        </div>
+        <div class="card-grid">
+          <div class="info-box">
+            <div class="info-box-title">Ticket Information to Capture</div>
+            <div class="info-row"><span class="dot" style="background:#1a3a5c;"></span>Client name &amp; full site address</div>
+            <div class="info-row"><span class="dot" style="background:#1a3a5c;"></span>Service category (Networking / CCTV / AV / Fiber / BMS)</div>
+            <div class="info-row"><span class="dot" style="background:#1a3a5c;"></span>Detailed problem description</div>
+            <div class="info-row"><span class="dot" style="background:#1a3a5c;"></span>Urgency level (Critical / High / Medium / Low)</div>
+            <div class="info-row"><span class="dot" style="background:#1a3a5c;"></span>Preferred visit date &amp; time window</div>
+            <div class="info-row"><span class="dot" style="background:#1a3a5c;"></span>Client contact person &amp; phone number</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Service Categories</div>
+            <div class="info-row"><span class="dot" style="background:#2a7ad5;"></span>IP Networking &amp; Campus Switches</div>
+            <div class="info-row"><span class="dot" style="background:#2a7ad5;"></span>CCTV &amp; IP Surveillance Systems</div>
+            <div class="info-row"><span class="dot" style="background:#2a7ad5;"></span>Access Control &amp; Fire Alarm</div>
+            <div class="info-row"><span class="dot" style="background:#2a7ad5;"></span>AV / Video Conferencing / Projectors</div>
+            <div class="info-row"><span class="dot" style="background:#2a7ad5;"></span>Fiber Optic &amp; Cabling</div>
+            <div class="info-row"><span class="dot" style="background:#2a7ad5;"></span>Home Automation &amp; BMS</div>
+          </div>
+        </div>
+        <div class="card-action" style="background:#eaf2ff;border:1px solid #c0d8f5;">
+          <span class="card-action-icon">📤</span>
+          <span style="color:#1a3a5c;">Ticket is saved and a <strong>unique Ticket ID is generated</strong>. Auto-notification is sent to the team lead immediately upon creation.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num" style="background:#2d6a4f;color:#fff;box-shadow:0 0 0 4px #c8e8d8;">2</div>
+        <div class="step-connector" style="background:linear-gradient(to bottom,#2d6a4f,#8a5200);"></div>
+      </div>
+      <div class="step-card">
+        <div class="card-header" style="background:linear-gradient(135deg,#e6f5ed,#f6fff9);">
+          <div class="card-header-icon" style="background:#c8e8d8;">👤</div>
+          <div class="card-header-text">
+            <div class="card-role" style="color:#2d6a4f;">Manager</div>
+            <div class="card-title">Assign Ticket to Field Engineer</div>
+          </div>
+        </div>
+        <div class="card-desc">
+          Manager reviews the ticket, checks engineer skill match and availability, then assigns the right person. Engineer receives an instant notification with complete ticket details and must accept before dispatch is confirmed.
+        </div>
+        <div class="card-grid">
+          <div class="info-box">
+            <div class="info-box-title">Assignment Checklist</div>
+            <div class="info-row"><span class="dot" style="background:#2d6a4f;"></span>Match engineer skill to service type</div>
+            <div class="info-row"><span class="dot" style="background:#2d6a4f;"></span>Pick engineer nearest to client site</div>
+            <div class="info-row"><span class="dot" style="background:#2d6a4f;"></span>Confirm engineer availability &amp; schedule</div>
+            <div class="info-row"><span class="dot" style="background:#2d6a4f;"></span>Check required parts &amp; tools availability</div>
+            <div class="info-row"><span class="dot" style="background:#2d6a4f;"></span>Set estimated arrival &amp; resolution time</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Engineer Receives</div>
+            <div class="info-row"><span class="dot" style="background:#1d6b3e;"></span>Ticket ID &amp; full problem description</div>
+            <div class="info-row"><span class="dot" style="background:#1d6b3e;"></span>Client address &amp; access instructions</div>
+            <div class="info-row"><span class="dot" style="background:#1d6b3e;"></span>Checklist of tools &amp; parts to carry</div>
+            <div class="info-row"><span class="dot" style="background:#1d6b3e;"></span>Client contact name &amp; phone number</div>
+            <div class="info-row"><span class="dot" style="background:#1d6b3e;"></span>Urgency level &amp; expected resolution time</div>
+          </div>
+        </div>
+        <div class="card-action" style="background:#e6f5ed;border:1px solid #a8dcc0;">
+          <span class="card-action-icon">🔔</span>
+          <span style="color:#1d6b3e;">Engineer gets <strong>push notification + SMS</strong>. Acceptance is confirmed before dispatch to avoid delays and miscommunication.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num" style="background:#8a5200;color:#fff;box-shadow:0 0 0 4px #ffdfa0;">3</div>
+        <div class="step-connector" style="background:linear-gradient(to bottom,#8a5200,#1a5c36);"></div>
+      </div>
+      <div class="step-card">
+        <div class="card-header" style="background:linear-gradient(135deg,#fff4e0,#fffdf7);">
+          <div class="card-header-icon" style="background:#ffdfa0;">📍</div>
+          <div class="card-header-text">
+            <div class="card-role" style="color:#8a5200;">Field Engineer</div>
+            <div class="card-title">Site Visit, Diagnosis &amp; Repair</div>
+          </div>
+        </div>
+        <div class="card-desc">
+          Engineer travels to client site, checks in via the system, performs on-site diagnosis, and begins repair or configuration work. Real-time updates are sent to manager and client every 30 minutes throughout the visit.
+        </div>
+        <div class="card-grid">
+          <div class="info-box">
+            <div class="info-box-title">On-Site Process</div>
+            <div class="info-row"><span class="dot" style="background:#8a5200;"></span>Check-in logged with GPS &amp; timestamp</div>
+            <div class="info-row"><span class="dot" style="background:#8a5200;"></span>Review ticket &amp; receive client briefing</div>
+            <div class="info-row"><span class="dot" style="background:#8a5200;"></span>Diagnose and identify root cause</div>
+            <div class="info-row"><span class="dot" style="background:#8a5200;"></span>Photograph fault before starting repair</div>
+            <div class="info-row"><span class="dot" style="background:#8a5200;"></span>Perform repair / configuration / installation</div>
+            <div class="info-row"><span class="dot" style="background:#8a5200;"></span>Test all systems before wrapping up</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Services Handled On-Site</div>
+            <div class="info-row"><span class="dot" style="background:#b86800;"></span>IP Networking, Switches &amp; Routers</div>
+            <div class="info-row"><span class="dot" style="background:#b86800;"></span>CCTV Camera &amp; DVR/NVR Setup</div>
+            <div class="info-row"><span class="dot" style="background:#b86800;"></span>Access Control &amp; Fire Alarm Systems</div>
+            <div class="info-row"><span class="dot" style="background:#b86800;"></span>AV Systems &amp; Video Conferencing</div>
+            <div class="info-row"><span class="dot" style="background:#b86800;"></span>Fiber Optic Splicing &amp; Termination</div>
+            <div class="info-row"><span class="dot" style="background:#b86800;"></span>Home Automation &amp; BMS Integration</div>
+          </div>
+        </div>
+        <div class="card-action" style="background:#fff4e0;border:1px solid #f5c87a;">
+          <span class="card-action-icon">🔄</span>
+          <span style="color:#8a5200;">Engineer sends <strong>real-time status updates every 30 minutes</strong>. Client can also track progress via their Ticket ID through the support portal.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num" style="background:#1a5c36;color:#fff;box-shadow:0 0 0 4px #b8edcc;">4</div>
+        <div class="step-connector" style="background:linear-gradient(to bottom,#1a5c36,#4a1c8c);"></div>
+      </div>
+      <div class="step-card">
+        <div class="card-header" style="background:linear-gradient(135deg,#e6f7ee,#f6fff9);">
+          <div class="card-header-icon" style="background:#b8edcc;">✅</div>
+          <div class="card-header-text">
+            <div class="card-role" style="color:#1a5c36;">Engineer + Manager</div>
+            <div class="card-title">Issue Resolved — Ticket Closed</div>
+          </div>
+        </div>
+        <div class="card-desc">
+          Work is completed, tested, and signed off by the client. Engineer uploads proof of repair and submits a work summary. Manager does final review, approves the closure, and the ticket is marked Resolved in the system.
+        </div>
+        <div class="card-grid">
+          <div class="info-box">
+            <div class="info-box-title">Engineer Closure Checklist</div>
+            <div class="info-row"><span class="dot" style="background:#1a5c36;"></span>Before &amp; after photos uploaded to ticket</div>
+            <div class="info-row"><span class="dot" style="background:#1a5c36;"></span>System tested &amp; fully operational confirmed</div>
+            <div class="info-row"><span class="dot" style="background:#1a5c36;"></span>Work summary &amp; parts used documented</div>
+            <div class="info-row"><span class="dot" style="background:#1a5c36;"></span>Client signature or verbal approval recorded</div>
+            <div class="info-row"><span class="dot" style="background:#1a5c36;"></span>Check-out timestamp logged in system</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Manager Final Review</div>
+            <div class="info-row"><span class="dot" style="background:#0d5c36;"></span>Review engineer's work report &amp; photos</div>
+            <div class="info-row"><span class="dot" style="background:#0d5c36;"></span>Log client satisfaction rating (1–5 stars)</div>
+            <div class="info-row"><span class="dot" style="background:#0d5c36;"></span>Flag if a follow-up visit is required</div>
+            <div class="info-row"><span class="dot" style="background:#0d5c36;"></span>Approve and close ticket in system</div>
+            <div class="info-row"><span class="dot" style="background:#0d5c36;"></span>Escalate if unresolved within SLA</div>
+          </div>
+        </div>
+        <div class="card-action" style="background:#e6f7ee;border:1px solid #90daa8;">
+          <span class="card-action-icon">📧</span>
+          <span style="color:#1a5c36;">Ticket status changes to <strong>Resolved</strong>. Auto-email is sent to client with full work summary, engineer name, and closure confirmation.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num" style="background:#4a1c8c;color:#fff;box-shadow:0 0 0 4px #d9ccff;">5</div>
+      </div>
+      <div class="step-card">
+        <div class="card-header" style="background:linear-gradient(135deg,#f2ecff,#faf8ff);">
+          <div class="card-header-icon" style="background:#d9ccff;">🧾</div>
+          <div class="card-header-text">
+            <div class="card-role" style="color:#4a1c8c;">Finance / Admin</div>
+            <div class="card-title">Invoice Raised &amp; Payment Collected</div>
+          </div>
+        </div>
+        <div class="card-desc">
+          Finance team generates an itemised invoice based on logged work, parts used, and travel. Invoice is shared with the client via email. Payment is collected, receipt issued, and the ticket is permanently archived.
+        </div>
+        <div class="card-grid">
+          <div class="info-box">
+            <div class="info-box-title">Invoice Line Items</div>
+            <div class="info-row"><span class="dot" style="background:#4a1c8c;"></span>Labour charges — hours × applicable rate</div>
+            <div class="info-row"><span class="dot" style="background:#4a1c8c;"></span>Spare parts &amp; consumables used on site</div>
+            <div class="info-row"><span class="dot" style="background:#4a1c8c;"></span>Travel / site visit charges</div>
+            <div class="info-row"><span class="dot" style="background:#4a1c8c;"></span>GST / tax breakup as applicable</div>
+            <div class="info-row"><span class="dot" style="background:#4a1c8c;"></span>Total amount due with payment deadline</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Accepted Payment Modes</div>
+            <div class="info-row"><span class="dot" style="background:#6b3abf;"></span>Bank Transfer — NEFT / RTGS / IMPS</div>
+            <div class="info-row"><span class="dot" style="background:#6b3abf;"></span>UPI / QR Code scan (instant)</div>
+            <div class="info-row"><span class="dot" style="background:#6b3abf;"></span>Cheque — for corporate / AMC clients</div>
+            <div class="info-row"><span class="dot" style="background:#6b3abf;"></span>Receipt issued immediately on payment</div>
+          </div>
+        </div>
+        <div class="card-action" style="background:#f2ecff;border:1px solid #c0a0f5;">
+          <span class="card-action-icon">🔒</span>
+          <span style="color:#4a1c8c;">Once payment is confirmed, ticket is <strong>Final Closed</strong>. Record is archived with warranty start date and service history for future reference.</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /timeline -->
+
+  <!-- QUICK TIPS -->
+  <div style="margin-top:48px;">
+    <p class="section-label">Best practices</p>
+    <p class="section-title">Tips for high-speed operations</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-sm);">
+        <div style="font-size:22px;margin-bottom:8px;">💬</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px;">WhatsApp per ticket</div>
+        <div style="font-size:13px;color:var(--text-mid);line-height:1.55;">Create a group per ticket — Manager + Engineer + Client. Keeps real-time chat alongside the formal ticket for speed.</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-sm);">
+        <div style="font-size:22px;margin-bottom:8px;">📦</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px;">Parts inventory tracker</div>
+        <div style="font-size:13px;color:var(--text-mid);line-height:1.55;">Maintain a live parts inventory so engineers always know availability before heading to site. Reduces repeat visits.</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-sm);">
+        <div style="font-size:22px;margin-bottom:8px;">⏱️</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px;">SLA timers per urgency</div>
+        <div style="font-size:13px;color:var(--text-mid);line-height:1.55;">Critical: 4hr, High: same day, Medium: 48hr, Low: 5 days. Set automated reminders so nothing slips through.</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-sm);">
+        <div style="font-size:22px;margin-bottom:8px;">⭐</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px;">Post-close satisfaction</div>
+        <div style="font-size:13px;color:var(--text-mid);line-height:1.55;">Send a 1–5 star SMS rating request after every ticket closure. Flags quality issues early and builds client trust.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div style="max-width:1100px;margin:auto;">
+    <strong>Symmetric IT Services</strong> &nbsp;|&nbsp;
+    308, De-Elmas Premises, Sonawala Cross Lane No.2, Goregaon East, Mumbai – 400 063 &nbsp;|&nbsp;
+    +91-9820053236 &nbsp;|&nbsp;
+    <a href="https://symmetricsols.com" style="color:#4d9de0;">symmetricsols.com</a>
+    <div style="margin-top:10px;font-size:12px;color:#4a6e88;">Service Call Workflow SOP — For internal field operations use</div>
+  </div>
+</footer>
+
+</body>
+</html>
